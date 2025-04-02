@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Yield Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Crop Yield Prediction</h1>
+        <form id="prediction-form">
+            <div class="form-group">
+                <label for="crop">Crop Type</label>
+                <select id="crop" name="crop">
+                    <option value="Wheat">Wheat</option>
+                    <option value="Rice">Rice</option>
+                    <option value="Corn">Corn</option>
+                    <!-- Add other crop options here -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="soil">Soil Type</label>
+                <select id="soil" name="soil">
+                    <option value="Loamy">Loamy</option>
+                    <option value="Clay">Clay</option>
+                    <option value="Sandy">Sandy</option>
+                    <!-- Add other soil options here -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="n">Nitrogen (N)</label>
+                <input type="number" id="n" name="n" required>
+            </div>
+            <div class="form-group">
+                <label for="p">Phosphorus (P)</label>
+                <input type="number" id="p" name="p" required>
+            </div>
+            <div class="form-group">
+                <label for="k">Potassium (K)</label>
+                <input type="number" id="k" name="k" required>
+            </div>
+            <div class="form-group">
+                <label for="moisture">Moisture (%)</label>
+                <input type="number" id="moisture" name="moisture" required>
+            </div>
+            <div class="form-group">
+                <label for="temp">Temperature (°C)</label>
+                <input type="number" id="temp" name="temp" required>
+            </div>
+            <div class="form-group">
+                <label for="land_area">Land Area (Ha)</label>
+                <input type="number" id="land_area" name="land_area" required>
+            </div>
+            <button type="button" onclick="submitForm()">Predict Yield</button>
+        </form>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function submitForm() {
+            const formData = new FormData(document.getElementById('prediction-form'));
+            const data = {
+                crop: formData.get('crop'),
+                soil: formData.get('soil'),
+                n: formData.get('n'),
+                p: formData.get('p'),
+                k: formData.get('k'),
+                moisture: formData.get('moisture'),
+                temp: formData.get('temp'),
+                land_area: formData.get('land_area')
+            };
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                document.getElementById('result').innerText = `Predicted Yield: ${result.yield.toFixed(2)} tons/ha`;
+            })
+            .catch(error => {
+                document.getElementById('result').innerText = 'Error in prediction!';
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
